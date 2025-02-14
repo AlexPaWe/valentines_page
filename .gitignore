@@ -19,9 +19,8 @@ TODOs.md
 .eslintcache
 
 # other files and directories to ignore
-pdf
+#pdf
 #textures
 textures/envelope*
-textures/letter*
 *.ico
 .vs
