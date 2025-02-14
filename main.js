@@ -181,6 +181,9 @@ function openLetter() {
 	);
 	material.map = letterTexture;
 	envelopeTexture.dispose();
+	
+	// Remove copyright notice for letter texture because it can no longer be seen.
+	document.getElementById('copyright').style.display = 'none';
 		
 	// start hearts explosion
 	createHeartExplosion();
