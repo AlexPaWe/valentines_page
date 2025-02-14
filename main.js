@@ -45,9 +45,9 @@ const geometry = new THREE.BoxGeometry(2, 0.1, 1); // A simple rectangle for the
 const textureLoader = new THREE.TextureLoader();
 const envelopeTexture = textureLoader.load(
 	etUrl,
-	() => console.log('Textur erfolgreich geladen!'),
+	() => console.log('Successfully loaded envelope texture!'),
 	undefined,
-	(err) => console.error('Fehler beim Laden der Textur:', err.message, err)
+	(err) => console.error('Error at loading envelope texture:', err.message, err)
 );
 const material = new THREE.MeshBasicMaterial({ map: envelopeTexture });
 const letter = new THREE.Mesh(geometry, material);
@@ -159,9 +159,9 @@ function openLetter() {
 			
 	const letterTexture = textureLoader.load(
 		liUrl,
-		() => console.log('Letter Textur erfolgreich geladen!'),
+		() => console.log('Successfully loaded letter texture!'),
 		undefined,
-		(err) => console.error('Fehler beim Laden der Letter Textur:', err.message, err)
+		(err) => console.error('Error during load of the letter texture:', err.message, err)
 	);
 	material.map = letterTexture;
 	envelopeTexture.dispose();
