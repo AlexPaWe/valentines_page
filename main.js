@@ -20,7 +20,7 @@ import { RenderPixelatedPass } from 'three/addons/postprocessing/RenderPixelated
 
 import { gsap } from "gsap";
 		
-import etUrl from './textures/envelope_texture.jpg';
+import etUrl from './textures/envelope_texture.png';
 import liUrl from'./textures/letter_inside.jpg';
 import pdfUrl from './pdf/letter.pdf';
 import hUrl from './textures/heart.png';
