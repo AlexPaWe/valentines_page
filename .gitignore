@@ -21,6 +21,5 @@ TODOs.md
 # other files and directories to ignore
 #pdf
 #textures
-textures/envelope*
-*.ico
+#*.ico
 .vs

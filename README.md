@@ -14,3 +14,8 @@ DEPLOY
 
 1. Copy the files in dist to your server:
    Per default the page should be served under the subpage valentines
+
+SHOUTOUTS
+---------
+
+Envelope texture by tohamina on [www.freepik.com](https://www.freepik.com)
