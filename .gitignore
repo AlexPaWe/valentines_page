@@ -20,6 +20,8 @@ TODOs.md
 
 # other files and directories to ignore
 pdf
-textures
+#textures
+textures/envelope*
+textures/letter*
 *.ico
 .vs
