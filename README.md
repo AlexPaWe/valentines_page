@@ -1,4 +1,4 @@
-VALENTINEs PAGE!
+VALENTINES PAGE!
 ---------------
 
 This is a webpage I have designed to gift a voucher I have received as a pdf.
