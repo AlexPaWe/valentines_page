@@ -9,7 +9,7 @@ import liUrl from'./textures/letter_inside.jpg';
 import pdfUrl from './pdf/letter.pdf';
 import hUrl from './textures/heart.png';
 	
-// 3D Szene erstellen
+// create 3D scene
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
@@ -20,28 +20,28 @@ camera.enableDamping = true;
 camera.enablePan = false;
 camera.enableZoom = false;
 		
-// Kamera positionieren
+// position camera
 camera.position.z = 5;
-	
-// Ursprüngliche Kamera-Position & Orientierung speichern
+
+// Save original camera position and orientation
 const initialCameraPosition = camera.position.clone();
 const initialCameraRotation = camera.rotation.clone();
 		
-// Post-Processing Setup
+// Post-processing setup
 const composer = new EffectComposer(renderer);
 
 // Pixelation Shader (Three.js Built-in)
 const renderPixelatedPass = new RenderPixelatedPass( 4.5, scene, camera );
 composer.addPass( renderPixelatedPass );
 
-// Ambient Light hinzufügen (gleichmäßiges Licht in der gesamten Szene)
-const ambientLight = new THREE.AmbientLight(0x404040, 3); // Farbe und Intensität
+// Add ambient light (uniform lighting in the whole scene)
+const ambientLight = new THREE.AmbientLight(0x404040, 3); // Color and intensity
 scene.add(ambientLight);
 
-// 3D Modell des Briefes erstellen
-const geometry = new THREE.BoxGeometry(2, 0.1, 1); // Ein einfaches Rechteck für den Brief
+// create 3D model of a letter
+const geometry = new THREE.BoxGeometry(2, 0.1, 1); // A simple rectangle for the letter
         
-// Textur laden und anwenden	
+// Load and apply a texture	
 const textureLoader = new THREE.TextureLoader();
 const envelopeTexture = textureLoader.load(
 	etUrl,
@@ -52,37 +52,37 @@ const envelopeTexture = textureLoader.load(
 const material = new THREE.MeshBasicMaterial({ map: envelopeTexture });
 const letter = new THREE.Mesh(geometry, material);
 		
-// Den Brief in eine schiefe Position drehen
-letter.rotation.x = Math.PI / 4;  // Neigt den Brief um 45 Grad um die X-Achse
-letter.rotation.y = Math.PI / 6;  // Neigt den Brief um 30 Grad um die Y-Achse
+// rotate the letter into a tilted orientation
+letter.rotation.x = Math.PI / 4;  // 45°
+letter.rotation.y = Math.PI / 6;  // 30°
 scene.add(letter);
 
-let isRotating = true; // Der Brief rotiert standardmäßig
+let isRotating = true; // The letter is rotating by default
 
-// Zusätzliche Lichtquelle: ein Punktlicht, um die Szene besser zu beleuchten
-const pointLight = new THREE.PointLight(0xffffff, 3, 100); // weißes Punktlicht
-pointLight.position.set(5, 5, 5); // Position des Lichts
+// Additional lightsource: a point light to better light the scene
+const pointLight = new THREE.PointLight(0xffffff, 3, 100); // white pointlight
+pointLight.position.set(5, 5, 5); // position of the light
 scene.add(pointLight);
 		
 // Raycasting Setup
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
-// Funktion zum Ermitteln der Mausposition
+// Function to detect the mouse position
 function onMouseMove(event) {
 	mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
 	mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 }
 		
-let letterState = 'closed'; // Mögliche Werte: 'closed', 'opened', 'zoomed'
+let letterState = 'closed'; // Possible values: 'closed', 'opened', 'zoomed'
 		
-let heartParticles = null; // Speichert die Partikelgruppe
+let heartParticles = null; // Holds the particle group
 		
 function createHeartExplosion() {
-	const particleCount = 30; // Anzahl der Herzen
-	heartParticles = new THREE.Group(); // Gruppe für alle Partikel
+	const particleCount = 30; // Number of hearts
+	heartParticles = new THREE.Group(); // Group for all particles
 
-	const heartTexture = new THREE.TextureLoader().load(hUrl); // Herztextur laden
+	const heartTexture = new THREE.TextureLoader().load(hUrl); // load heart texture
 	
 	for (let i = 0; i < particleCount; i++) {
 		const geometry = new THREE.PlaneGeometry(0.2, 0.2);
@@ -94,14 +94,14 @@ function createHeartExplosion() {
 
 		const particle = new THREE.Mesh(geometry, material);
 
-		// Zufällige Richtung für die Explosion
+		// Random direction for the explosion
 		const direction = new THREE.Vector3(
 			(Math.random() - 0.5) * 4,
 			Math.random() * 4,
 			(Math.random() - 0.5) * 4
 		);
 
-		// Animiert die Bewegung der Herzen nach außen
+		// Animates the movement of the heart
 		gsap.to(particle.position, {
 			duration: 3,
 			x: particle.position.x + direction.x,
@@ -118,18 +118,18 @@ function createHeartExplosion() {
 	scene.add(heartParticles);
 }
 
-// Klickereignis
+// Click event
 function onClick(event) {
-	// Mausposition aktualisieren
-	onMouseMove(event);  // Stellt sicher, dass die Position immer aktuell ist
+	// Get current mouse position
+	onMouseMove(event);  // Ensures that the position is always correct
 	
-    // Ray aus der Mausposition werfen
+    // Throw ray from the mouse's position
     raycaster.setFromCamera(mouse, camera);
 
-    // Kollision mit dem Modell des Briefes
+    // Collision with the letter
     const intersects = raycaster.intersectObject(letter);
 
-    // Wenn der Brief getroffen wird
+    // When the letter is hit by the ray
     if (intersects.length > 0) {
         if (letterState === 'closed') {
 			openLetter();
@@ -143,13 +143,12 @@ function onClick(event) {
     }
 }
 
-// Beispielaktion: Brief "öffnen"
 function openLetter() {
-	// DIN A4 Verhältnis: 1 (Breite) : 1.414 (Höhe)
-	const dinA4Width = 2; // Ausgangsbreite
+	// DIN A4 aspect ratio: 1 (Width) : 1.414 (Height)
+	const dinA4Width = 2; // original width
 	const dinA4Height = dinA4Width * 1.414;
 
-	// Skalierung des Briefes im DIN A4-Format
+	// Scaling of the letter to DIN A4
 	gsap.to(letter.scale, { 
 		duration: 1.5, 
 		x: dinA4Width, 
@@ -164,30 +163,28 @@ function openLetter() {
 		undefined,
 		(err) => console.error('Fehler beim Laden der Letter Textur:', err.message, err)
 	);
-	//letterTexture.rotation = Math.PI / 4;
 	material.map = letterTexture;
 	envelopeTexture.dispose();
 		
-	// **Herzen-Explosion starten**
+	// start hearts explosion
 	createHeartExplosion();
 			
 }
-		
-// Beispielaktion: Brief "heranzoomen"
+
 function zoomLetter() {
-	const aspectRatio = 1 / 1.414;  // DIN A4 Verhältnis (Breite/Höhe)
+	const aspectRatio = 1 / 1.414;  // DIN A4 aspect ration (Width/Height)
 
-	// Berechne den sichtbaren Bereich basierend auf der Kameraposition und dem Field of View
-	const fov = camera.fov * (Math.PI / 180); // Umwandlung in Radian
-	const distance = camera.position.z; // Kamera-Entfernung zum Brief
-	const visibleHeight = 2 * Math.tan(fov / 2) * distance; // Sichtbare Höhe
-	const visibleWidth = visibleHeight * (window.innerWidth / window.innerHeight); // Sichtbare Breite
+	// Calculate the visible area based on the camera position and field of view
+	const fov = camera.fov * (Math.PI / 180); // Convert to radian
+	const distance = camera.position.z; // Distance of the camera to the letter
+	const visibleHeight = 2 * Math.tan(fov / 2) * distance; // visibility height
+	const visibleWidth = visibleHeight * (window.innerWidth / window.innerHeight); // visibility Width
 
-	// Der Brief soll max. 60% der sichtbaren Fläche einnehmen
+	// The letter shall only cover 60% of the visible area
 	const maxWidth = visibleWidth * 0.9;
 	const maxHeight = visibleHeight * 0.9;
 
-	// Berechne die endgültige Größe unter Beibehaltung des Seitenverhältnisses
+	// Calculate the final size while keeping the aspect ratio
 	let finalWidth = maxWidth;
 	let finalHeight = finalWidth / aspectRatio;
 	
@@ -196,23 +193,23 @@ function zoomLetter() {
 		finalWidth = finalHeight * aspectRatio;
 	}
 			
-	// **Endposition und Rotation setzen**
-	const finalRotationX = Math.PI / 2; // Endrotation X (keine Neigung)
-	const finalRotationY = Math.PI / 2; // Endrotation Y (keine Drehung)
-	const finalRotationZ = 0; // Endrotation Z (keine Verdrehung)
+	// set endposition and rotation
+	const finalRotationX = Math.PI / 2; // Endrotation X
+	const finalRotationY = Math.PI / 2; // Endrotation Y
+	const finalRotationZ = 0; // Endrotation Z
 
 	const finalPositionX = 0;
 	const finalPositionY = 0;
 	const finalPositionZ = 0;
 
-	// Sanftes Stoppen der Rotation
+	// Gentle stop of the rotation
 	gsap.to(letter.rotation, { 
 		duration: 1.5, 
 		x: finalRotationX,
 		y: finalRotationY,
 		z: finalRotationZ,
 		ease: "power2.inOut", 
-		onComplete: () => isRotating = false // Rotation komplett stoppen nach Animation
+		onComplete: () => isRotating = false // completely stop rotation after animation
 	});
 
 	gsap.to(letter.scale, { 
@@ -231,7 +228,7 @@ function zoomLetter() {
 		ease: "power2.inOut" 
 	});
 			
-	// **Herzpartikel langsam ausblenden**
+	// Slowly fade out heart particles
 	if (heartParticles) {
 		heartParticles.children.forEach((particle) => {
 			gsap.to(particle.material, {
@@ -248,7 +245,7 @@ function zoomLetter() {
 		});
 	}
 			
-	// **Kamera zurücksetzen**
+	// Reset camera
 	gsap.to(camera.position, {
 		duration: 1.5,
 		x: initialCameraPosition.x,
@@ -279,17 +276,15 @@ function download(url) {
 	document.body.removeChild(a)
 }
 
-// Event Listener für Mausbewegung und Klick
+// Event listener for mouse movement and click
 window.addEventListener('mousemove', onMouseMove, false);
 renderer.domElement.addEventListener('click', onClick, false);
 		
-// Animationsfunktion
 function animate() {
     requestAnimationFrame(animate);
             
-    // Nur rotieren, wenn isRotating true ist
 	if (isRotating) {
-		letter.rotation.y += 0.005; // Kontinuierliche Rotation
+		letter.rotation.y += 0.005; // continous rotation
 		if (heartParticles) {
 			heartParticles.rotation.y += 0.005;
 		}
@@ -300,13 +295,13 @@ function animate() {
         
 animate();
 
-// Fenstergröße anpassen
+// adapt to window resize
 window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 			
-	// Shader-Auflösung anpassen
+	// update shader-resolution
 	composer.setSize(window.innerWidth, window.innerHeight);
 	zoomLetter();
 });
